@@ -14,7 +14,7 @@ public static class SocialSecurityNumber
     /// Gets the available information of a norwegian social security number
     /// </summary>
     /// <param name="socialSecurityNumber">Norwegian social security number (Fødselsnummer)</param>
-    /// <returns></returns>
+    /// <returns>New SocialSecurityNumberInformation{ IsValid, DateOfBirth, Gender, BirthNumberType } class with information from a Norwegian Social Security Number</returns>
     public static SocialSecurityNumberInformation Information(this string? socialSecurityNumber)
     {
         return new SocialSecurityNumberInformation
