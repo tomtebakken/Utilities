@@ -8,4 +8,4 @@ For more detailed information about the [Norwegian social security number (Føds
 
 
 P.S.
-The tests in this project are not perfect an can be improved, but it shows a bit of how I feel that a liberty should contain. 
+The tests in this project are not perfect an can be improved, but it shows a bit of how I feel what a liberty should contain. 
