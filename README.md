@@ -6,6 +6,11 @@ A Norwegian social security number (Fødselsnummer) contains veritas information
 
 For more detailed information about the [Norwegian social security number (Fødselsnummer) go here](Utilities/SocialSecurityNumber.md).
 
+## Norwegian bank account number Utility
+This utility is built to validate if a Norwegian bank account number is in the correct format including control digit validation. It is also built to get witch bank the Account number belongs to. 
+
+For more detailed information about the [Norwegian bank account number Utility go here](Utilities/AccountNumber.md).
+
 
 P.S.
 The tests in this project are not perfect an can be improved, but it shows a bit of how I feel what a liberty should contain. 
