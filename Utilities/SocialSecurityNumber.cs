@@ -89,6 +89,9 @@ public static class SocialSecurityNumber
     /// </returns>
     public static string BirthNumberType(this string? socialSecurityNumber)
     {
+        if (CorrectLength(socialSecurityNumber))
+            return string.Empty;
+
         var dayOfMonth = int.Parse(socialSecurityNumber.AsSpan(0, 2));
         var Month = int.Parse(socialSecurityNumber.AsSpan(2, 2));
 

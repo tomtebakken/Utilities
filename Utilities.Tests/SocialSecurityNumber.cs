@@ -7,7 +7,7 @@ using Utilities.Models;
 
 namespace Utilities.Tests;
 
-public class UnitTest1
+public class SocialSecurityNumber
 {
     [Theory]
     [InlineData("70019950032", true, Gender.female, "D-Number", "30.01.1899")]
@@ -17,6 +17,10 @@ public class UnitTest1
     [InlineData("71012312371", true, Gender.male, "D-Number", "31.01.1923")]
     [InlineData("31412312345", true, Gender.male, "H-Number", "31.01.1923")]
     [InlineData("29022012337", true, Gender.male, "Normal", "29.02.1920")]
+    [InlineData("31412312345", false, Gender.male, "H-Number", "31.01.1923")]
+    [InlineData("3141231234", false, Gender.male, "H-Number", "31.01.1923")]
+    [InlineData("31412312", false, Gender.none, "H-Number", "31.01.1923")]
+    [InlineData("314123", false, Gender.none, "H-Number", "31.01.1923")]
     public void Information_ShouldBeTrue(string? socialSecurityNumber, bool isValid, Gender gender, string numberType, string dateOfBirth)
     {
         //Arrange
@@ -69,6 +73,7 @@ public class UnitTest1
     [InlineData("51111199993", Gender.male)]
     [InlineData("50069949824", Gender.female)]
     [InlineData("31012312388", Gender.male)]
+    [InlineData("310123", Gender.none)]
     [InlineData("", Gender.none)]
     public void WitchGender_ShouldBeFalse(string? socialSecurityNumber, Gender gender)
     {
@@ -88,6 +93,7 @@ public class UnitTest1
     [InlineData("71012312371", "D-Number")]
     [InlineData("31412312345", "H-Number")]
     [InlineData("29022012337", "Normal")]
+    [InlineData("", "")]
     public void BirthdayNumberType_ShouldBeTrue(string? socialSecurityNumber, string numberType)
     {
         //Arrange
@@ -128,6 +134,7 @@ public class UnitTest1
     [InlineData("71012312371", 1923)]
     [InlineData("31412312345", 1923)]
     [InlineData("29022012337", 1920)]
+    [InlineData("290220", 0)]
     public void YearOfBirth_ShouldBeTrue(string? socialSecurityNumber, int year)
     {
         //Arrange
