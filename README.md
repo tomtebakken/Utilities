@@ -13,4 +13,4 @@ For more detailed information about the [Norwegian bank account number Utility g
 
 
 P.S.
-The tests in this project are not perfect an can be improved, but it shows a bit of how I feel what a liberty should contain. 
+The tests in this project are not perfect an can probably be improved, but it shows a bit of how I feel what a liberty should contain. 
