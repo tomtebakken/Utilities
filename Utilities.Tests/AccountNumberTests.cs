@@ -1,5 +1,6 @@
 using Xunit;
 using FluentAssertions;
+using System.IO;
 
 namespace Utilities.Tests;
 
@@ -23,7 +24,26 @@ public class AccountNumberTests
         result.Should().Be(shouldBe);
     }
 
-    [Theory]
+	[Theory]
+	[InlineData("TestData/AccountNumbers.txt")]
+	public void ValidateAccountNumbersFromFile(string filePath)
+	{
+		// Read all lines from the file
+		var accountNumbers = File.ReadAllLines(filePath);
+
+		foreach (var accountNumber in accountNumbers)
+		{
+			// Arrange
+
+			// Act
+			var result = accountNumber.IsValid();
+
+			// Assert
+			Assert.True(result, $"Account number {accountNumber} should be valid.");
+		}
+	}
+
+	[Theory]
     [InlineData("1150 12 34569" , "DNB Bank ASA")]
     [InlineData("1234 12 34569" , "Unknown")]
     public void GetWitchBank_ShouldBeFalse(string? accountNumber, string bank)

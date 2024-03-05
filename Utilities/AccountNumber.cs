@@ -22,33 +22,34 @@ public static class AccountNumber
     /// <param name="accountNumber">Bank Account Number</param>
     /// <returns>true if valid</returns>
     public static bool IsValid(this string? accountNumber)
-    {
-        if (accountNumber.AcceptableFormatAndLength())
-            return false;
+	{
+		if (accountNumber.AcceptableFormatAndLength())
+			return false;
 
-        var digit = accountNumber
-            .Where(char.IsDigit)
-            .Select(character => int.Parse(character.ToString()))
-            .ToArray();
+		var digit = accountNumber
+			.Where(char.IsDigit)
+			.Select(character => int.Parse(character.ToString()))
+			.ToArray();
 
-        if (digit.Count() != 11)
-            return false;
+		if (digit.Count() != 11)
+			return false;
 
-        int[] controlDigitsFirst = { 5, 4, 3, 2, 7, 6, 5, 4, 3, 2 };
-        var checkSum1 = 11 - controlDigitsFirst.Select((controlDigit, index) => controlDigit * digit[index]).Sum() % 11;
+		int[] controlDigits = { 5, 4, 3, 2, 7, 6, 5, 4, 3, 2 };
+		var checkSum = 11 - controlDigits.Select((controlDigit, index) => controlDigit * digit[index]).Sum() % 11;
 
-        if (checkSum1 != digit[10])
-            return false;
+		if (checkSum == digit[10] || checkSum - 11 == digit[10])
+			return true;
 
-        return true;
-    }
+		return false;
+	}
 
-    /// <summary>
-    /// Checks what Bank the bank account number belongs to. It looks up if the bank using bank Identification in the JSON file Norwegian BIC-IBAN (Depending on the age this file may be out of date. It was downloaded in 2024).
-    /// </summary>
-    /// <param name="accountNumber">Bank Account Number</param>
-    /// <returns>Name of the Bank. If the bank is not found Unknown is returned</returns>
-    public static string GetWitchBank(this string? accountNumber)
+
+	/// <summary>
+	/// Checks what Bank the bank account number belongs to. It looks up if the bank using bank Identification in the JSON file Norwegian BIC-IBAN (Depending on the age this file may be out of date. It was downloaded in 2024).
+	/// </summary>
+	/// <param name="accountNumber">Bank Account Number</param>
+	/// <returns>Name of the Bank. If the bank is not found Unknown is returned</returns>
+	public static string GetWitchBank(this string? accountNumber)
     {
         var bankIdentifications = GetBankIdentification();
 
