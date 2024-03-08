@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using Utilities.Common;
 using Utilities.Models;
 
 namespace Utilities;
@@ -23,21 +24,20 @@ public static class AccountNumber
     /// <returns>true if valid</returns>
     public static bool IsValid(this string? accountNumber)
 	{
-		if (accountNumber.AcceptableFormatAndLength())
+		if (accountNumber.LengthAndFormat(RegularExpressions.AccountNumberFormat))
 			return false;
 
-		var digit = accountNumber
+		var digits = accountNumber
 			.Where(char.IsDigit)
 			.Select(character => int.Parse(character.ToString()))
 			.ToArray();
 
-		if (digit.Count() != 11)
+		if (digits.Count() != 11)
 			return false;
 
-		int[] controlDigits = { 5, 4, 3, 2, 7, 6, 5, 4, 3, 2 };
-		var checkSum = 11 - controlDigits.Select((controlDigit, index) => controlDigit * digit[index]).Sum() % 11;
+		var checkSum = digits.Mod11CalculateCheckDigit();
 
-		if (checkSum == digit[10] || checkSum - 11 == digit[10])
+		if (checkSum == digits[10] || checkSum - 11 == digits[10])
 			return true;
 
 		return false;
@@ -53,16 +53,11 @@ public static class AccountNumber
     {
         var bankIdentifications = GetBankIdentification();
 
-        if (bankIdentifications == null || accountNumber.AcceptableFormatAndLength())
+        if (bankIdentifications == null || accountNumber.LengthAndFormat(RegularExpressions.AccountNumberFormat))
             return "Unknown";
 
         BankIdentification bankIdentification = bankIdentifications.FirstOrDefault(bankIdentification => bankIdentification.Bankidentifier == accountNumber.Substring(0 ,4));
         return bankIdentification != null ? bankIdentification.Bank.TrimStart().TrimEnd() : "Unknown";
-    }
-
-    private static bool AcceptableFormatAndLength(this string? accountNumber)
-    {
-        return string.IsNullOrEmpty(accountNumber) || !new Regex(@"^\d{4} \d{2} \d{5}$|^\d{4}\.\d{2}\.\d{5}$|^\d{11}$").IsMatch(accountNumber);
     }
 
     private static List<BankIdentification>? GetBankIdentification()
