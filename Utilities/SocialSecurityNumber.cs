@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
+using Utilities.Common;
 using Utilities.Enums;
 using Utilities.Models;
 
@@ -35,21 +37,20 @@ public static class SocialSecurityNumber
     /// <returns>True if the number is of a valid format</returns>
     public static bool IsValidFormat(this string? socialSecurityNumber, bool controlDigits = true)
     {
-        if (CorrectLength(socialSecurityNumber))
+        if (socialSecurityNumber.LengthAndFormat(RegularExpressions.SocialSecurityNumberFormat))
             return false;
 
-        var digit = socialSecurityNumber
+        var digits = socialSecurityNumber
             .Select(character => int.Parse(character.ToString()))
             .ToArray();
         
         if (controlDigits)
         {
             int[] controlDigitsFirst = {3, 7, 6, 1, 8, 9, 4, 5, 2};
-            int[] controlDigitsSecond = {5, 4, 3, 2, 7, 6, 5, 4, 3, 2};
-            var checkSum1 = 11 - controlDigitsFirst.Select ((controlDigit, index) => controlDigit * digit[index]).Sum() % 11;
-            var checkSum2 = 11 - controlDigitsSecond.Select ((controlDigit, index) => controlDigit * digit[index]).Sum() % 11;
+            var checkSum1 = 11 - controlDigitsFirst.Select ((controlDigit, index) => controlDigit * digits[index]).Sum() % 11;
+			var checkSum2 = digits.Mod11CalculateCheckDigit();
 
-            if (checkSum1 != digit[9] || checkSum2 != digit[10])
+			if (checkSum1 != digits[9] || checkSum2 != digits[10])
                 return false;
         }
 
@@ -66,7 +67,7 @@ public static class SocialSecurityNumber
     /// <returns>female if the ninth digit is even number, if not is male. if its not the correct length it returns none.</returns>
     public static Gender WitchGender(this string? socialSecurityNumber)
     {
-        if (CorrectLength(socialSecurityNumber))
+        if (socialSecurityNumber.LengthAndFormat(RegularExpressions.SocialSecurityNumberFormat))
             return Gender.none;
 
         var digit = socialSecurityNumber
@@ -89,7 +90,7 @@ public static class SocialSecurityNumber
     /// </returns>
     public static string BirthNumberType(this string? socialSecurityNumber)
     {
-        if (CorrectLength(socialSecurityNumber))
+        if (socialSecurityNumber.LengthAndFormat(RegularExpressions.SocialSecurityNumberFormat))
             return string.Empty;
 
         var dayOfMonth = int.Parse(socialSecurityNumber.AsSpan(0, 2));
@@ -114,7 +115,7 @@ public static class SocialSecurityNumber
     /// <returns>The Date of birth if the number is of the correct length and format</returns>
     public static DateTime? GetDateOfBirth(this string? socialSecurityNumber)
     {
-        if (CorrectLength(socialSecurityNumber))
+        if (socialSecurityNumber.LengthAndFormat(RegularExpressions.SocialSecurityNumberFormat))
             return null;
 
         var dayOfMonth = int.Parse(socialSecurityNumber.AsSpan(0, 2));
@@ -146,8 +147,8 @@ public static class SocialSecurityNumber
     /// <param name="socialSecurityNumber">Norwegian social security number (Fødselsnummer)</param>
     /// <returns>4 digit number representing the year of birth</returns>
     public static int YearOfBirth(this string? socialSecurityNumber)
-    {
-        if (CorrectLength(socialSecurityNumber))
+	{
+        if (socialSecurityNumber.LengthAndFormat(RegularExpressions.SocialSecurityNumberFormat))
             return 0;
 
         var year = int.Parse(socialSecurityNumber.AsSpan(4, 2));
@@ -161,17 +162,6 @@ public static class SocialSecurityNumber
         };
         
         return century + year;
-    }
-
-    /// <summary>
-    /// Checks if the norwegian social security number (Fødselsnummer) in not null or empty.
-    /// It also checks that it is of the correct length and only contains digits and not any other characters.
-    /// </summary>
-    /// <param name="socialSecurityNumber">Norwegian social security number (Fødselsnummer)</param>
-    /// <returns>true is all the criteria are correct</returns>
-    private static bool CorrectLength(string? socialSecurityNumber)
-    {
-        return string.IsNullOrEmpty(socialSecurityNumber) || !new Regex(@"^\d{11}$").IsMatch(socialSecurityNumber);
     }
 }
 
